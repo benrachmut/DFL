@@ -13,8 +13,8 @@ class ExperimentConfig:
         num_of_hubs = None
         num_runs = None
         num_run = None
-
-
+        data_distribution = None
+        unlabeled_data_percentage = None
 
 ec = ExperimentConfig()
 

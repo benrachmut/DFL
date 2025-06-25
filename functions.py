@@ -1,6 +1,15 @@
-from random import random, Random
+from random import Random
+
+from sympy.core.parameters import distribute
 
 from config_ import *
+
+import torch
+from torchvision import datasets, transforms
+from torch.utils.data import DataLoader, Subset, random_split
+
+import math
+from collections import deque
 
 def create_random_uniform_dict(p):
     num_clients = ec.num_clients
@@ -33,9 +42,7 @@ def get_neighbors_dict():
         return create_random_uniform_dict(0.2)
 
 
-import math
-import heapq
-from collections import deque
+
 
 def compute_distances(graph, start):
     """Breadth-first search to compute shortest path lengths from start to all other nodes."""
@@ -99,5 +106,41 @@ def select_hubs():
     return selected
 
 # Press the green button in the gutter to run the script.
+
+
+
 def create_data():
-    pass
+    torch.manual_seed(ec.num_run)
+
+    transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((0.5,), (0.5,))  # CIFAR-10 normalization
+    ])
+
+    # Download CIFAR-10 train set
+    if ec.data_set == DataSet.CIFAR10:
+        train_dataset = datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
+        test_dataset = datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
+
+
+    ul_data, client_pool = split_train_label_unlabel(train_dataset)
+
+
+    if ec.data_distribution == DataDistribution.IID:
+        client_data = random_split(
+            client_pool,
+            [ec.num_clients // ec.num_clients] * ec.num_clients,
+            generator=torch.Generator().manual_seed(ec.num_run + 1)
+        )
+    print()
+
+def split_train_label_unlabel(train_dataset):
+    total_size = len(train_dataset)
+    global_size = int(ec.unlabeled_data_percentage * total_size)
+    client_size = total_size - global_size
+
+    global_data, client_pool = random_split(train_dataset, [global_size, client_size],
+                                            generator=torch.Generator().manual_seed(ec.num_run))
+
+    return global_data, client_pool
+
