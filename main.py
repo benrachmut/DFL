@@ -1,16 +1,22 @@
-# This is a sample Python script.
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+from config_ import *
+from functions import *
 
 
-# Press the green button in the gutter to run the script.
+
 if __name__ == '__main__':
-    print_hi('PyCharmSSSfvvsdvssdf')
+    print(device)
+    ec.data_set = DataSet.CIFAR100
+    ec.topology_technique = TopologyTechnique.SparseRandom
+    ec.num_clients = 25
+    ec.num_of_hubs = 5
+    ec.num_runs = 1
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    for num_run in range(ec.num_runs):
+        ec.num_run = num_run
+        ec.neighbors_dict = get_neighbors_dict()
+        ec.selected_hubs = select_hubs()
+
+        train_data,test_data,ul_data = create_data()
+        clients = create_clients()
+
