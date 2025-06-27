@@ -13,8 +13,13 @@ if __name__ == '__main__':
     ec.unlabeled_data_percentage = 0.2
     ec.iterations = 10
 
+    ec.client_hub_net = NetType.AlexNet
+    ec.client_non_hub_net = NetType.VGG
+
     ec.algorithm = Algorithm.DMAPL
     ec.environment = Env.Distributed
+
+
     for num_run in range(ec.num_runs):
         ec.num_run = num_run
         ec.neighbors_dict = get_neighbors_dict()

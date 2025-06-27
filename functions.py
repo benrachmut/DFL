@@ -131,6 +131,8 @@ def get_data_sets():
         ])
         train_dataset = datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
         test_dataset = datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
+        ec.num_classes = 10
+
     if ec.data_set == DataSet.CIFAR100:
         mean, std = (0.5071, 0.4867, 0.4408), (0.2675, 0.2565, 0.2761)
 
@@ -140,6 +142,7 @@ def get_data_sets():
         ])
         train_dataset = datasets.CIFAR100(root='./data', train=True, download=True, transform=transform)
         test_dataset = datasets.CIFAR100(root='./data', train=False, download=True, transform=transform)
+        ec.num_classes = 100
 
     return train_dataset,test_dataset
 
@@ -153,7 +156,7 @@ def distribute_data_between_clients(train_dataset,test_dataset):
 def create_data_per_client_dict(train_data, test_data, ul_data,test_dataset):
     ans = {}
     for i in range(ec.num_clients):
-        ans[i] = {"train": train_data[i], "test": test_data[i], "UL": ul_data,"global_test":test_dataset}
+        ans[i] = {"train_data": train_data[i], "test_data": test_data[i], "UL": ul_data,"global_test":test_dataset}
 
     return ans
 
