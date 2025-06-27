@@ -15,7 +15,9 @@ class ExperimentConfig:
         num_run = None
         data_distribution = None
         unlabeled_data_percentage = None
-
+        algorithm = None
+        environment = None
+        iterations = None
 ec = ExperimentConfig()
 
 class DataSet(Enum):
@@ -29,5 +31,8 @@ class TopologyTechnique(Enum):
     DenseRandom = "DenseRandom"
     SparseRandom = "SparseRandom"
 
+class Algorithm(Enum):
+    DMAPL ="DMAPL"
 
-
+class Env(Enum):
+    Distributed ="Distributed"

@@ -1,5 +1,5 @@
 from random import Random
-
+from Entities import *
 from sympy.core.parameters import distribute
 
 from config_ import *
@@ -108,31 +108,83 @@ def select_hubs():
 # Press the green button in the gutter to run the script.
 
 
+def distributed_iid(data_pool):
+    total_len = len(data_pool)
+    base_len = total_len // ec.num_clients
+    lengths = [base_len] * ec.num_clients
+    lengths[-1] += total_len - sum(lengths)  # Assign remainder to last client
 
-def create_data():
-    torch.manual_seed(ec.num_run)
+    client_data = random_split(
+        data_pool,
+        lengths,
+        generator=torch.Generator().manual_seed(ec.num_run + 1)
+    )
+    return client_data
 
-    transform = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize((0.5,), (0.5,))  # CIFAR-10 normalization
-    ])
-
-    # Download CIFAR-10 train set
+def get_data_sets():
     if ec.data_set == DataSet.CIFAR10:
+        mean, std = (0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)
+
+        transform = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Normalize(mean, std)  # Adjust for CIFAR-10
+        ])
         train_dataset = datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
         test_dataset = datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
+    if ec.data_set == DataSet.CIFAR100:
+        mean, std = (0.5071, 0.4867, 0.4408), (0.2675, 0.2565, 0.2761)
+
+        transform = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Normalize(mean, std)  # Adjust for CIFAR-10
+        ])
+        train_dataset = datasets.CIFAR100(root='./data', train=True, download=True, transform=transform)
+        test_dataset = datasets.CIFAR100(root='./data', train=False, download=True, transform=transform)
+
+    return train_dataset,test_dataset
+
+def distribute_data_between_clients(train_dataset,test_dataset):
+    if ec.data_distribution == DataDistribution.IID:
+        distributed_client_data = distributed_iid(train_dataset)
+        distributed_test_dataset = distributed_iid(test_dataset)
+    return   distributed_client_data, distributed_test_dataset
 
 
+def create_data_per_client_dict(train_data, test_data, ul_data,test_dataset):
+    ans = {}
+    for i in range(ec.num_clients):
+        ans[i] = {"train": train_data[i], "test": test_data[i], "UL": ul_data,"global_test":test_dataset}
+
+    return ans
+
+def create_data():
+    # Set seed for reproducibility
+    torch.manual_seed(ec.num_run)
+
+    # Define transform
+
+    # Load CIFAR-10 dataset
+    train_dataset,test_dataset = get_data_sets()
+    global_data_set =Subset(test_dataset, list(range(len(test_dataset))))
+    # Split into labeled/unlabeled pools
     ul_data, client_pool = split_train_label_unlabel(train_dataset)
 
+    distributed_client_data, distributed_test_dataset =distribute_data_between_clients(client_pool,test_dataset)
+    # Split IID data among clients
 
-    if ec.data_distribution == DataDistribution.IID:
-        client_data = random_split(
-            client_pool,
-            [ec.num_clients // ec.num_clients] * ec.num_clients,
-            generator=torch.Generator().manual_seed(ec.num_run + 1)
-        )
-    print()
+    dict_data_per_client = create_data_per_client_dict(distributed_client_data, distributed_test_dataset, ul_data,global_data_set)
+    return   dict_data_per_client
+
+def create_clients(data_per_client_dict):
+    # Extract known keys
+    if ec.algorithm ==  Algorithm.DMAPL:
+        clients = [
+            Client_DMAPLE(customer_id, dataset_dict)
+            for customer_id, dataset_dict in data_per_client_dict.items()
+        ]
+    return clients
+
+
 
 def split_train_label_unlabel(train_dataset):
     total_size = len(train_dataset)
