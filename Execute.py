@@ -1,29 +1,53 @@
 from config_ import *
 
 
-def execute_distributed(clients_dict):
+def all_compute(clients_dict,t):
+    for client in clients_dict.values():
+        client.compute(t)
+
+
+def all_send(clients_dict):
+    for id_, client in clients_dict.items():
+        sender = id_
+        what_to_send = client.data_to_send
+        receivers = client.neighbors
+
+        for receiver_id in receivers:
+            receiver_obj = clients_dict[receiver_id]
+            receiver_obj.received_data[sender] = what_to_send
+
+
+def all_receive(clients_dict):
+    for client in clients_dict.values():
+        client.digest_received_data()
+
+def all_init(clients_dict):
     for client in clients_dict.values():
         client.initialize()
 
-    for i in ec.iterations:
-        data_to_send = {id_: {}}  # what to send, list to who
-        for client in clients_dict.values():
-            id_ = client.id_
-            data_to_send[id_][client.data_to_send] = client.neighbors
-
-        for client in clients_dict.values():
-            sender = client.id_
-            for what_to_send, receivers in data_to_send[sender]:
-                for receiver_id in receivers:
-                    client_to_receive = clients_dict[receiver_id]
-                    client_to_receive.recieve_data(what_to_send)
-
-        for client in clients_dict.values():
-            client.digest_recieved_data()
+def measure_neighbors(clients_dict,t):
+    for id_,client in clients_dict.items():
+        neighbors_ids = client.neighbors
+        client_test_data = client.test_data
 
 
-        for client in clients_dict.values():
-            client.compute()
+def execute_distributed(clients_dict):
+    all_init(clients_dict)
+    measure_neighbors(0)
+    for t in range(1,ec.iterations):
+        print("*********** iteration: ",t," ***********")
+        all_send(clients_dict)
+        all_receive(clients_dict)
+        all_compute(clients_dict,t)
+
+
+
+
+
+
+
+
+
 
 
 

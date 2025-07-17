@@ -6,7 +6,7 @@ if __name__ == '__main__':
     print("Device:", device)
     ec.data_set = DataSet.CIFAR10
     ec.topology_technique = TopologyTechnique.SparseRandom
-    ec.num_clients = 25
+    ec.num_clients = 5
     ec.num_of_hubs = 5
     ec.num_runs = 1
     ec.data_distribution = DataDistribution.IID
@@ -14,7 +14,7 @@ if __name__ == '__main__':
     ec.iterations = 10
 
     ec.client_hub_net = NetType.AlexNet
-    ec.client_non_hub_net = NetType.VGG
+    ec.client_non_hub_net = NetType.AlexNet
 
     ec.algorithm = Algorithm.DMAPL
     ec.environment = Env.Distributed

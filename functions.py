@@ -181,11 +181,14 @@ def create_data():
 def create_clients(data_per_client_dict):
     # Extract known keys
     if ec.algorithm ==  Algorithm.DMAPL:
-        clients = [
+        clients_list = [
             Client_DMAPLE(customer_id, dataset_dict)
             for customer_id, dataset_dict in data_per_client_dict.items()
         ]
-    return clients
+        ans =  {}
+        for c in clients_list:
+            ans[c.id_]=c
+    return ans
 
 
 

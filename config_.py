@@ -34,6 +34,13 @@ class ExperimentConfig:
         self.learning_rate_train = 0.0001
         self.epochs_num = 5
 
+
+    def to_dict(self):
+        """Returns a dictionary of attribute names and their values."""
+        return {attr: getattr(self, attr) for attr in dir(self) if
+                not callable(getattr(self, attr)) and not attr.startswith("__")}
+
+
 ec = ExperimentConfig()
 
 class DataSet(Enum):
