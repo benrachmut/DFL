@@ -26,7 +26,7 @@ if __name__ == '__main__':
     ec.client_non_hub_net = NetType.AlexNet
 
     ec.environment = Env.Distributed
-    client_hub_nets = [NetType.AlexNet]
+    client_hub_nets = [NetType.VGG]
     algorithms = [Algorithm.DMAPL]
     data_to_pickle = {}
 
