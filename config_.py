@@ -1,6 +1,7 @@
 from enum import Enum
 
 import torch
+from visualization.plotXMLAttributes import retrieveValues
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -22,6 +23,20 @@ class ExperimentConfig:
         self.client_hub_net = None
         self.num_classes =None
 
+    def __str__(self):
+        a=self.data_set.name
+        b=self.topology_technique.name
+        c=str(self.num_clients)
+        d=str(self.num_of_hubs)
+        e=str(self.num_runs)
+        f=str(self.iterations)
+        g=self.data_distribution.name
+        h=self.algorithm.name
+        i=self.environment.name
+        x=self.client_hub_net.name
+        y=self.client_non_hub_net.name
+        return a+","+b+","+c+","+d+","+e+","+f+","+g+","+h+","+i+","+x+","+y
+
     def update_vgg(self):
         self.batch_size = 64
         self.learning_rate_fine_tune = 0.0001
@@ -33,6 +48,7 @@ class ExperimentConfig:
         self.learning_rate_fine_tune = 0.001
         self.learning_rate_train = 0.0001
         self.epochs_num = 5
+
 
 
     def to_dict(self):

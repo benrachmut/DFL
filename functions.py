@@ -202,3 +202,47 @@ def split_train_label_unlabel(train_dataset):
 
     return global_data, client_pool
 
+
+def all_compute(clients_dict,t):
+    for client in clients_dict.values():
+        client.compute(t)
+
+
+def all_send(clients_dict):
+    for id_, client in clients_dict.items():
+        sender = id_
+        what_to_send = client.data_to_send
+        receivers = client.neighbors
+
+        for receiver_id in receivers:
+            receiver_obj = clients_dict[receiver_id]
+            receiver_obj.received_data[sender] = what_to_send
+
+
+def all_receive(clients_dict):
+    for client in clients_dict.values():
+        client.digest_received_data()
+
+def all_init(clients_dict):
+    for client in clients_dict.values():
+        client.initialize()
+
+def measure_neighbors(clients_dict,t):
+    for id_,client in clients_dict.items():
+        neighbors_ids = client.neighbors
+        client_test_data = client.test_data
+
+        top_1=[]
+        top_5=[]
+        top_10 = []
+        for neighbors_id in neighbors_ids:
+            neighbor_client = clients_dict[neighbors_id]
+            single_top_1, single_top_5,single_top_10  = neighbor_client.get_accuracy_of_other(client_test_data) #necreate method in neighbor_client that reviceives client_test_data and returns accuracy
+            top_1.append(single_top_1)
+            top_5.append(single_top_5)
+            top_10.append(single_top_10)
+
+
+        client.best_neighbor_model_accuracy_1[t] = max(top_1)
+        client.best_neighbor_model_accuracy_5[t] = max(top_5)
+        client.best_neighbor_model_accuracy_10[t] = max(top_10)

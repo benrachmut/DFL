@@ -47,7 +47,7 @@ class RecordData:
         self.strong_client_best_neighbor_model_accuracy_5 = {}
 
 
-        for client in clients:
+        for client in clients.values():
             ########
             self.client_loss_train[client.id_] = client.loss_train
             self.client_loss_test[client.id_] = client.loss_test
@@ -335,10 +335,10 @@ class Client_DMAPLE(Client):
         self.aggregated_pl = None
         self.neighbors = ec.neighbors_dict[client_id]
     def collect_data(self,t):
-        self.self_model_accuracy_1[0] = self.evaluate_accuracy(self.test_data, k=1)
-        self.self_model_accuracy_5[0] = self.evaluate_accuracy(self.test_data, k=5)
-        self.self_model_accuracy_10[0] = self.evaluate_accuracy(self.test_data, k=10)
-        self.loss_test[0] = self.evaluate_test_loss()
+        self.self_model_accuracy_1[t] = self.evaluate_accuracy(self.test_data, k=1)
+        self.self_model_accuracy_5[t] = self.evaluate_accuracy(self.test_data, k=5)
+        self.self_model_accuracy_10[t] = self.evaluate_accuracy(self.test_data, k=10)
+        self.loss_test[t] = self.evaluate_test_loss()
 
     def initialize(self):
         self.loss_train[0] = self.fine_tune()
@@ -387,3 +387,9 @@ class Client_DMAPLE(Client):
     def digest_received_data(self):
         pseudo_labels_list = list(self.received_data.values())
         self.aggregated_pl = self.select_confident_pseudo_labels(pseudo_labels_list)
+
+    def get_accuracy_of_other(self, other_test_data):
+        accuracy_1 = self.evaluate_accuracy(other_test_data, k=1)
+        accuracy_5 = self.evaluate_accuracy(other_test_data, k=5)
+        accuracy_10 = self.evaluate_accuracy(other_test_data, k=10)
+        return accuracy_1,accuracy_5,accuracy_10
