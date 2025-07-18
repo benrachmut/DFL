@@ -1,7 +1,6 @@
 from enum import Enum
 
 import torch
-from visualization.plotXMLAttributes import retrieveValues
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
