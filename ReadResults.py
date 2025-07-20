@@ -20,13 +20,13 @@ def get_avg_per_client(param):
 
 if __name__ == '__main__':
 
-    with open('data_to_delete/CIFAR10,SparseRandom,25,5,1,10,IID,DMAPL,Distributed,AlexNet,AlexNet.pkl', 'rb') as f:
+    with open('CIFAR10,SparseRandom,25,5,1,10,IID,DMAPL,Distributed,VGG,AlexNet.pkl', 'rb') as f:
         data = pickle.load(f)
 
     print(data)
 
     algos =  [Algorithm.DMAPL]
-    strong_nets = [NetType.AlexNet]
+    strong_nets = [NetType.VGG]
     for algo in algos:
         for strong_net in strong_nets:
             selected_data = data[algo][strong_net][0]
