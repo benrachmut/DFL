@@ -17,7 +17,7 @@ if __name__ == '__main__':
 
     ec.data_set = DataSet.CIFAR10
     ec.topology_technique = TopologyTechnique.SparseRandom
-    ec.num_clients = 25
+    ec.num_clients = 10
     ec.num_of_hubs = 5
     ec.num_runs = 1
     ec.data_distribution = DataDistribution.IID

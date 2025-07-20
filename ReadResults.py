@@ -32,5 +32,6 @@ if __name__ == '__main__':
             selected_data = data[algo][strong_net][0]
             avg_best_n = get_avg_per_client("client_best_neighbor_model_accuracy_1")
             avg_personal = get_avg_per_client("client_self_model_accuracy_1")
-
+            #avg_best_n = get_avg_per_client("client_loss_test")
+            #avg_personal = get_avg_per_client("client_loss_train")
             print()
