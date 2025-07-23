@@ -17,7 +17,7 @@ if __name__ == '__main__':
 
     data_sets = [DataSet.CIFAR10]
     topologies = [TopologyTechnique.DenseRandom]
-    client_sizes = [10]
+    client_sizes = [25]
     client_hub_nets = [NetType.VGG]
 
     ec.num_of_hubs = 5
