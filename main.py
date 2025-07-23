@@ -15,9 +15,9 @@ def extract_info(clients,t):
 if __name__ == '__main__':
     print("Device:", device)
 
-    data_sets = [DataSet.CIFAR100]
+    data_sets = [DataSet.CIFAR10]
     topologies = [TopologyTechnique.DenseRandom]
-    client_sizes = [25]
+    client_sizes = [10]
     client_hub_nets = [NetType.VGG,NetType.AlexNet]
 
     ec.num_of_hubs = 5
