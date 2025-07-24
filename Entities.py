@@ -44,8 +44,16 @@ class RecordData:
         self.strong_client_loss_test = {}
         #########
         self.strong_client_self_model_accuracy_1 = {}
+        self.strong_client_best_neighbor_model_accuracy_1 = {}
+        self.strong_client_self_model_accuracy_5 = {}
         self.strong_client_best_neighbor_model_accuracy_5 = {}
 
+
+        #########
+        self.weak_client_self_model_accuracy_1 = {}
+        self.weak_client_best_neighbor_model_accuracy_1 = {}
+        self.weak_client_self_model_accuracy_5 = {}
+        self.weak_client_best_neighbor_model_accuracy_5 = {}
 
         for client in clients.values():
             ########
@@ -61,10 +69,16 @@ class RecordData:
             if client.id_ in ec.selected_hubs:
                 self.strong_client_loss_train[client.id_]=client.loss_train
                 self.strong_client_loss_test[client.id_]=client.loss_test
-                self.strong_client_self_model_accuracy_1[client.id_]=client.self_model_accuracy_1
-                self.strong_client_best_neighbor_model_accuracy_5[client.id_]=client.self_model_accuracy_5
-                self.strong_client_self_model_accuracy_10 = {}
+                self.strong_client_self_model_accuracy_1[client.id_] = client.self_model_accuracy_1
+                self.strong_client_best_neighbor_model_accuracy_1[client.id_] = client.best_neighbor_model_accuracy_1
+                self.strong_client_self_model_accuracy_5[client.id_] = client.self_model_accuracy_5
+                self.strong_client_best_neighbor_model_accuracy_5[client.id_] = client.best_neighbor_model_accuracy_5
 
+            else:
+                self.weak_client_self_model_accuracy_1[client.id_] = client.self_model_accuracy_1
+                self.weak_client_best_neighbor_model_accuracy_1[client.id_] = client.best_neighbor_model_accuracy_1
+                self.weak_client_self_model_accuracy_5[client.id_] = client.self_model_accuracy_5
+                self.weak_client_best_neighbor_model_accuracy_5[client.id_] = client.best_neighbor_model_accuracy_5
 class Client(ABC):
     def __init__(self, client_id, data_dict):
         self.id_ = client_id
