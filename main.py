@@ -19,7 +19,7 @@ if __name__ == '__main__':
     topologies = [TopologyTechnique.SparseRandom]
     client_sizes = [25]
     client_hub_nets = [NetType.VGG]
-    hubs_ratios = [0.2]
+    hubs_ratios = [0.4]
     ec.num_of_hubs = 5
     ec.num_runs = 1
     ec.data_distribution = DataDistribution.IID
