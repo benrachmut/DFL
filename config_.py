@@ -22,11 +22,13 @@ class ExperimentConfig:
         self.client_hub_net = None
         self.num_classes =None
 
+        self.hub_ratio = None
+        self.epochs_num = 5
     def __str__(self):
         a=self.data_set.name
         b=self.topology_technique.name
         c=str(self.num_clients)
-        d=str(self.num_of_hubs)
+        d=str(int(self.hub_ratio*100))
         e=str(self.num_runs)
         f=str(self.iterations)
         g=self.data_distribution.name
@@ -37,18 +39,14 @@ class ExperimentConfig:
         return a+","+b+","+c+","+d+","+e+","+f+","+g+","+h+","+i+","+x+","+y
 
     def update_vgg(self):
-        self.batch_size = 64
-        self.learning_rate_fine_tune = 0.0001
-        self.learning_rate_train = 0.0001
-        self.epochs_num = 5
+        batch_size = 128
+        learning_rate= 0.0001
+        return batch_size,learning_rate
 
     def update_alexNet(self):
-        self.batch_size = 64
-        self.learning_rate_fine_tune = 0.001
-        self.learning_rate_train = 0.0001
-        self.epochs_num = 5
-
-
+        batch_size = 64
+        learning_rate = 0.001
+        return batch_size, learning_rate
 
     def to_dict(self):
         """Returns a dictionary of attribute names and their values."""

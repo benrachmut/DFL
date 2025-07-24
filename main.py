@@ -6,7 +6,7 @@ def extract_info(clients,t):
     measure_neighbors(clients, t)
 
     rd = RecordData(clients)
-    data_to_pickle[ec.data_set.name][ec.topology_technique][ec.num_clients][ec.client_hub_net] = rd
+    data_to_pickle[ec.data_set.name][ec.topology_technique][ec.num_clients][ec.client_hub_net][ec.num_of_hubs] = rd
     name_pkl = str(ec)+ ".pkl"
     with open(name_pkl, 'wb') as f:
         pickle.dump(data_to_pickle, f)
@@ -16,10 +16,10 @@ if __name__ == '__main__':
     print("Device:", device)
 
     data_sets = [DataSet.CIFAR10]
-    topologies = [TopologyTechnique.DenseRandom]
+    topologies = [TopologyTechnique.SparseRandom]
     client_sizes = [25]
-    client_hub_nets = [NetType.VGG,NetType.AlexNet]
-
+    client_hub_nets = [NetType.VGG]
+    hubs_ratios = [0.2]
     ec.num_of_hubs = 5
     ec.num_runs = 1
     ec.data_distribution = DataDistribution.IID
@@ -48,27 +48,30 @@ if __name__ == '__main__':
                     ec.client_hub_net = client_hub_net
                     data_to_pickle[ec.data_set.name][ec.topology_technique][ec.num_clients][ec.client_hub_net] = {}
 
+                    for hubs_ratio in hubs_ratios:
+                        ec.num_of_hubs = int(ec.num_clients * hubs_ratio)
+                        data_to_pickle[ec.data_set.name][ec.topology_technique][ec.num_clients][ec.client_hub_net][ec.num_of_hubs] = {}
 
+                        for num_run in range(ec.num_runs):
 
-                    for num_run in range(ec.num_runs):
-                        #data_to_pickle[ec.algorithm][ec.client_hub_net][num_run] = {}
+                            ec.num_run = num_run
+                            ec.neighbors_dict = get_neighbors_dict()
+                            ec.selected_hubs = select_hubs()
+                            data_per_client_dict = create_data()
+                            print("1")
+                            clients = create_clients(data_per_client_dict)
+                            print("2")
 
-                        ec.num_run = num_run
-                        ec.neighbors_dict = get_neighbors_dict()
-                        ec.selected_hubs = select_hubs()
-                        data_per_client_dict = create_data()
-                        clients = create_clients(data_per_client_dict)
+                            if ec.environment == Env.Distributed:
+                                all_init(clients)
+                                extract_info(clients,0)
 
-                        if ec.environment == Env.Distributed:
-                            all_init(clients)
-                            extract_info(clients,0)
-
-                            for t in range(1, ec.iterations):
-                                print("*********** iteration:",t,"***********")
-                                all_send(clients)
-                                all_receive(clients)
-                                all_compute(clients, t)
-                                extract_info(clients,t)
+                                for t in range(1, ec.iterations):
+                                    print("*********** iteration:",t,"***********")
+                                    all_send(clients)
+                                    all_receive(clients)
+                                    all_compute(clients, t)
+                                    extract_info(clients,t)
 
 
 
