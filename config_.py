@@ -28,15 +28,14 @@ class ExperimentConfig:
         a=self.data_set.name
         b=self.topology_technique.name
         c=str(self.num_clients)
-        d=str(int(self.hub_ratio*100))
+        d=str(self.num_of_hubs)
         e=str(self.num_runs)
         f=str(self.iterations)
         g=self.data_distribution.name
         h=self.algorithm.name
         i=self.environment.name
         x=self.client_hub_net.name
-        y=self.client_non_hub_net.name
-        return a+","+b+","+c+","+d+","+e+","+f+","+g+","+h+","+i+","+x+","+y
+        return a+","+b+","+c+","+d+","+e+","+f+","+g+","+h+","+i+","+x
 
     def update_vgg(self):
         batch_size = 128
